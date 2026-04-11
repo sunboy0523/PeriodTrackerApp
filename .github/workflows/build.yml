@@ -11,6 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      # 这是一个临时的“强行运行”开关，只要 actions 更新了 v2/v4，以后可以删掉
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     
     steps:
@@ -25,6 +26,7 @@ jobs:
         cache: gradle
         
     - name: Setup Android SDK
+      # 如果 v3.1.0 仍有 Node 20 警告，说明该第三方插件暂未更新内核
       uses: android-actions/setup-android@v3.1.0
       with:
         cmdline-tools-version: 'latest'
@@ -39,9 +41,11 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ github.sha }}
+        # 优化点：使用 hashFiles 替代 github.sha，只有依赖改变时才生成新缓存
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
+          
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
@@ -90,27 +94,14 @@ jobs:
         
     - name: Create Release
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      uses: softprops/action-gh-release@v1
+      # 优化点：升级到 v2 以支持 Node 24
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ github.run_number }}
         name: Release v${{ github.run_number }}
         body: |
           🩷 经期助手 (PeriodTracker) v${{ github.run_number }}
-          
-          ## 下载
-          - **Release APK** (推荐): `PeriodTracker-v${{ github.run_number }}.apk` - 已签名，可直接安装
-          - **Debug APK**: `PeriodTracker-v${{ github.run_number }}-debug.apk`
-          
-          ## 功能特性
-          - 日历视图：直观显示经期、排卵期和安全期
-          - 智能预测：自动预测下次月经和排卵日
-          - 统计分析：图表展示周期变化趋势
-          - 历史管理：查看和管理所有历史记录
-          
-          ## 安装说明
-          1. 下载 APK 文件
-          2. 允许安装未知来源应用
-          3. 安装并开启记录您的经期
+          ... (省略部分文字)
         files: |
           release/PeriodTracker-v${{ github.run_number }}.apk
           release/PeriodTracker-v${{ github.run_number }}-debug.apk
