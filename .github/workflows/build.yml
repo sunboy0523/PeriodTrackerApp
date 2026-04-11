@@ -1,0 +1,114 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: gradle
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      with:
+        api-level: 34
+        build-tools: 34.0.0
+        
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Generate Keystore
+      run: |
+        mkdir -p keystore
+        keytool -genkey -v \
+          -keystore keystore/periodtracker.keystore \
+          -alias periodtracker \
+          -keyalg RSA \
+          -keysize 2048 \
+          -validity 10000 \
+          -storepass periodtracker2024 \
+          -keypass periodtracker2024 \
+          -dname "CN=PeriodTracker, OU=Development, O=PeriodTracker, L=City, ST=State, C=CN"
+      
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug --no-daemon
+      
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-apk
+        path: app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 30
+        
+    - name: Build Signed Release APK
+      env:
+        KEYSTORE_PASSWORD: periodtracker2024
+        KEY_ALIAS: periodtracker
+        KEY_PASSWORD: periodtracker2024
+      run: ./gradlew assembleRelease --no-daemon
+      
+    - name: Upload Signed Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: signed-release-apk
+        path: app/build/outputs/apk/release/app-release.apk
+        retention-days: 90
+        
+    - name: Rename APK for Release
+      run: |
+        mkdir -p release
+        cp app/build/outputs/apk/release/app-release.apk release/PeriodTracker-v${{ github.run_number }}.apk
+        cp app/build/outputs/apk/debug/app-debug.apk release/PeriodTracker-v${{ github.run_number }}-debug.apk
+        
+    - name: Create Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
+        body: |
+          🩷 经期助手 (PeriodTracker) v${{ github.run_number }}
+          
+          ## 下载
+          - **Release APK** (推荐): `PeriodTracker-v${{ github.run_number }}.apk` - 已签名，可直接安装
+          - **Debug APK**: `PeriodTracker-v${{ github.run_number }}-debug.apk`
+          
+          ## 功能特性
+          - 日历视图：直观显示经期、排卵期和安全期
+          - 智能预测：自动预测下次月经和排卵日
+          - 统计分析：图表展示周期变化趋势
+          - 历史管理：查看和管理所有历史记录
+          
+          ## 安装说明
+          1. 下载 APK 文件
+          2. 允许安装未知来源应用
+          3. 安装并开启记录您的经期
+        files: |
+          release/PeriodTracker-v${{ github.run_number }}.apk
+          release/PeriodTracker-v${{ github.run_number }}-debug.apk
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
