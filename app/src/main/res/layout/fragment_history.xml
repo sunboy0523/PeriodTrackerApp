@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="暂无记录\n点击\"开始经期\"添加您的第一条记录"
+            android:text="暂无记录\n点击「开始经期」添加您的第一条记录"
             android:textAlignment="center"
             android:textSize="16sp"
             android:textColor="@color/gray"
