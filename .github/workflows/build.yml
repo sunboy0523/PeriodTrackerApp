@@ -10,45 +10,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # 这是一个临时的“强行运行”开关，只要 actions 更新了 v2/v4，以后可以删掉
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
         cache: gradle
-        
+
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3.1.0
       with:
         cmdline-tools-version: 'latest'
         accept-android-sdk-licenses: true
-        
-    - name: Install Android SDK packages
-      run: |
-        yes | sdkmanager "platforms;android-34" "platforms;android-35" "build-tools;34.0.0" "build-tools;35.0.0"
-        
+
     - name: Cache Gradle packages
       uses: actions/cache@v4
       with:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        # 优化点：使用 hashFiles 替代 github.sha，只有依赖改变时才生成新缓存
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-          
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-      
+
     - name: Generate Keystore
       run: |
         mkdir -p keystore
@@ -61,32 +53,36 @@ jobs:
           -storepass periodtracker2024 \
           -keypass periodtracker2024 \
           -dname "CN=PeriodTracker, OU=Development, O=PeriodTracker, L=City, ST=State, C=CN"
-      
+
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon
-      
+      run: ./gradlew assembleDebug --no-daemon --stacktrace
+
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
+      if: success()
       with:
         name: debug-apk
         path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 30
-        
+
     - name: Build Signed Release APK
       env:
         KEYSTORE_PASSWORD: periodtracker2024
         KEY_ALIAS: periodtracker
         KEY_PASSWORD: periodtracker2024
       run: ./gradlew assembleRelease --no-daemon
-      
+      if: success()
+
     - name: Upload Signed Release APK
       uses: actions/upload-artifact@v4
+      if: success()
       with:
         name: signed-release-apk
         path: app/build/outputs/apk/release/app-release.apk
         retention-days: 90
-        
+
     - name: Rename APK for Release
+      if: success()
       run: |
         mkdir -p release
         if [ -f app/build/outputs/apk/release/app-release.apk ]; then
@@ -95,17 +91,16 @@ jobs:
         if [ -f app/build/outputs/apk/debug/app-debug.apk ]; then
           cp app/build/outputs/apk/debug/app-debug.apk release/PeriodTracker-v${{ github.run_number }}-debug.apk
         fi
-        
+
     - name: Create Release
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-      # 优化点：升级到 v2 以支持 Node 24
+      if: success() && github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ github.run_number }}
         name: Release v${{ github.run_number }}
         body: |
           🩷 经期助手 (PeriodTracker) v${{ github.run_number }}
-          ... (省略部分文字)
+          自动构建版本
         files: |
           release/PeriodTracker-v${{ github.run_number }}.apk
           release/PeriodTracker-v${{ github.run_number }}-debug.apk
