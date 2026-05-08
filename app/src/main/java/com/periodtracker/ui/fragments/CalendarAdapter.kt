@@ -54,61 +54,38 @@ class CalendarAdapter(
 
         holder.tvDay.text = date.dayOfMonth.toString()
 
-        // 设置背景颜色
-        when {
-            isInPeriod(date) -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.period_red_light)
-                )
-            }
-            isOvulationDate(date) -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.ovulation_purple_light)
-                )
-            }
-            isFertileWindow(date) -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.fertile_green_light)
-                )
-            }
-            isPredictedPeriod(date) -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.predicted_pink)
-                )
-            }
-            isCurrentMonth -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.white)
-                )
-            }
-            else -> {
-                holder.itemView.setBackgroundColor(
-                    ContextCompat.getColor(holder.itemView.context, R.color.gray_light)
-                )
-            }
+        val context = holder.itemView.context
+        val backgroundColor = when {
+            isInPeriod(date) -> ContextCompat.getColor(context, R.color.period_red_light)
+            isOvulationDate(date) -> ContextCompat.getColor(context, R.color.ovulation_purple_light)
+            isFertileWindow(date) -> ContextCompat.getColor(context, R.color.fertile_green_light)
+            isPredictedPeriod(date) -> ContextCompat.getColor(context, R.color.predicted_pink)
+            isCurrentMonth -> ContextCompat.getColor(context, R.color.white)
+            else -> ContextCompat.getColor(context, R.color.gray_light)
         }
+        holder.itemView.setBackgroundColor(backgroundColor)
 
-        // 设置文字颜色
-        holder.tvDay.setTextColor(
-            when {
-                isToday -> ContextCompat.getColor(holder.itemView.context, R.color.today_blue)
-                isInPeriod(date) -> ContextCompat.getColor(holder.itemView.context, R.color.period_red)
-                isCurrentMonth -> ContextCompat.getColor(holder.itemView.context, R.color.black)
-                else -> ContextCompat.getColor(holder.itemView.context, R.color.gray)
-            }
-        )
+        val textColor = when {
+            isToday -> ContextCompat.getColor(context, R.color.today_blue)
+            isInPeriod(date) -> ContextCompat.getColor(context, R.color.period_red)
+            isCurrentMonth -> ContextCompat.getColor(context, R.color.black)
+            else -> ContextCompat.getColor(context, R.color.gray)
+        }
+        holder.tvDay.setTextColor(textColor)
 
-        // 选中标记
         holder.indicator.visibility = if (isSelected) View.VISIBLE else View.GONE
 
         holder.itemView.setOnClickListener {
-            val oldPosition = findPositionForDate(selectedDate)
-            selectedDate = date
-            onDateClick(date)
-            if (oldPosition != RecyclerView.NO_POSITION) {
-                notifyItemChanged(oldPosition)
+            val currentPosition = holder.bindingAdapterPosition
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                val oldPosition = findPositionForDate(selectedDate)
+                selectedDate = date
+                onDateClick(date)
+                if (oldPosition != RecyclerView.NO_POSITION) {
+                    notifyItemChanged(oldPosition)
+                }
+                notifyItemChanged(currentPosition)
             }
-            notifyItemChanged(holder.adapterPosition)
         }
     }
 
@@ -117,8 +94,7 @@ class CalendarAdapter(
     private fun getDateForPosition(position: Int): LocalDate {
         val startOfMonth = currentMonth.atDay(1)
         val dayOfWeek = startOfMonth.dayOfWeek.value % 7
-        val firstVisibleDate = startOfMonth.minusDays(dayOfWeek.toLong())
-        return firstVisibleDate.plusDays(position.toLong())
+        return startOfMonth.minusDays(dayOfWeek.toLong()).plusDays(position.toLong())
     }
 
     private fun findPositionForDate(date: LocalDate): Int {
@@ -133,7 +109,7 @@ class CalendarAdapter(
     }
 
     private fun isOvulationDate(date: LocalDate): Boolean {
-        return date == ovulation
+        return ovulation != null && date == ovulation
     }
 
     private fun isFertileWindow(date: LocalDate): Boolean {
