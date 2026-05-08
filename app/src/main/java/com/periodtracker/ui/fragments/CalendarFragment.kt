@@ -63,30 +63,26 @@ class CalendarFragment : Fragment() {
             calendarAdapter.previousMonth()
         }
 
-        // 下一月
         binding.btnNextMonth.setOnClickListener {
             calendarAdapter.nextMonth()
         }
 
-        // 今天按钮
-        binding.btnToday.setOnClickListener {
-            calendarAdapter.goToToday()
-            viewModel.selectDate(LocalDate.now())
+        binding.tvCurrentMonth.setOnClickListener {
+            showDatePickerDialog()
         }
 
-        // 开始经期按钮
         binding.btnStartPeriod.setOnClickListener {
             showStartPeriodDialog()
         }
 
-        // 结束经期按钮
         binding.btnEndPeriod.setOnClickListener {
             viewModel.endCurrentPeriod()
         }
 
-        // 选择日期按钮
-        binding.tvCurrentMonth.setOnClickListener {
-            showDatePickerDialog()
+        binding.tvCurrentMonth.setOnLongClickListener {
+            calendarAdapter.goToToday()
+            viewModel.selectDate(LocalDate.now())
+            true
         }
     }
 
@@ -193,7 +189,8 @@ class CalendarFragment : Fragment() {
                         ContextCompat.getColor(requireContext(), R.color.ovulation_purple)
                     )
                 }
-                fertile != null && selectedDate.isAfter(fertile.first.minusDays(1)) && 
+                selectedDate != null && fertile != null && 
+                    selectedDate.isAfter(fertile.first.minusDays(1)) && 
                     selectedDate.isBefore(fertile.second.plusDays(1)) -> {
                     binding.tvDateStatus.text = "排卵期"
                     binding.tvDateStatus.setTextColor(

@@ -108,7 +108,7 @@ class CalendarAdapter(
             if (oldPosition != RecyclerView.NO_POSITION) {
                 notifyItemChanged(oldPosition)
             }
-            notifyItemChanged(holder.bindingAdapterPosition)
+            notifyItemChanged(holder.absoluteAdapterPosition)
         }
     }
 
