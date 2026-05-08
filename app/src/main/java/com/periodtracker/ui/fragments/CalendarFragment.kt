@@ -5,7 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.periodtracker.R
@@ -15,7 +16,6 @@ import com.periodtracker.viewmodel.PeriodViewModel
 import com.periodtracker.viewmodel.PeriodViewModelFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class CalendarFragment : Fragment() {
 
@@ -158,7 +158,9 @@ class CalendarFragment : Fragment() {
             val notes = if (record.notes.isNotEmpty()) record.notes else "无"
 
             binding.tvDateStatus.text = "经期第${duration}天"
-            binding.tvDateStatus.setTextColor(resources.getColor(R.color.period_red, null))
+            binding.tvDateStatus.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.period_red)
+            )
 
             val flowText = when (record.flowLevel) {
                 1 -> "少量"
@@ -181,20 +183,28 @@ class CalendarFragment : Fragment() {
             when {
                 selectedDate == nextPeriod -> {
                     binding.tvDateStatus.text = "预计月经开始"
-                    binding.tvDateStatus.setTextColor(resources.getColor(R.color.period_red, null))
+                    binding.tvDateStatus.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.period_red)
+                    )
                 }
                 selectedDate == ovulation -> {
                     binding.tvDateStatus.text = "排卵日"
-                    binding.tvDateStatus.setTextColor(resources.getColor(R.color.ovulation_purple, null))
+                    binding.tvDateStatus.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.ovulation_purple)
+                    )
                 }
-                fertile != null && !selectedDate!!.isBefore(fertile.first) && 
-                    !selectedDate.isAfter(fertile.second) -> {
+                fertile != null && selectedDate.isAfter(fertile.first.minusDays(1)) && 
+                    selectedDate.isBefore(fertile.second.plusDays(1)) -> {
                     binding.tvDateStatus.text = "排卵期"
-                    binding.tvDateStatus.setTextColor(resources.getColor(R.color.fertile_green, null))
+                    binding.tvDateStatus.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.fertile_green)
+                    )
                 }
                 else -> {
                     binding.tvDateStatus.text = "非经期"
-                    binding.tvDateStatus.setTextColor(resources.getColor(R.color.gray, null))
+                    binding.tvDateStatus.setTextColor(
+                        ContextCompat.getColor(requireContext(), R.color.gray)
+                    )
                 }
             }
 

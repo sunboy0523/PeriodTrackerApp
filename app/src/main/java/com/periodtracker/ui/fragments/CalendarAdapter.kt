@@ -28,6 +28,7 @@ class CalendarAdapter(
     companion object {
         const val DAYS_IN_WEEK = 7
         const val MAX_WEEKS = 6
+        const val DEFAULT_PERIOD_DURATION = 5
     }
 
     inner class DateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -100,15 +101,32 @@ class CalendarAdapter(
         // 选中标记
         holder.indicator.visibility = if (isSelected) View.VISIBLE else View.GONE
 
-        // 点击事件
         holder.itemView.setOnClickListener {
+            val oldPosition = findPositionForDate(selectedDate)
             selectedDate = date
             onDateClick(date)
-            notifyDataSetChanged()
+            if (oldPosition != RecyclerView.NO_POSITION) {
+                notifyItemChanged(oldPosition)
+            }
+            notifyItemChanged(holder.bindingAdapterPosition)
         }
     }
 
     override fun getItemCount(): Int = DAYS_IN_WEEK * MAX_WEEKS
+
+    private fun getDateForPosition(position: Int): LocalDate {
+        val startOfMonth = currentMonth.atDay(1)
+        val dayOfWeek = startOfMonth.dayOfWeek.value % 7
+        val firstVisibleDate = startOfMonth.minusDays(dayOfWeek.toLong())
+        return firstVisibleDate.plusDays(position.toLong())
+    }
+
+    private fun findPositionForDate(date: LocalDate): Int {
+        val startOfMonth = currentMonth.atDay(1)
+        val dayOfWeek = startOfMonth.dayOfWeek.value % 7
+        val firstVisibleDate = startOfMonth.minusDays(dayOfWeek.toLong())
+        return java.time.temporal.ChronoUnit.DAYS.between(firstVisibleDate, date).toInt()
+    }
 
     private fun isInPeriod(date: LocalDate): Boolean {
         return records.any { it.containsDate(date) }
@@ -125,8 +143,7 @@ class CalendarAdapter(
 
     private fun isPredictedPeriod(date: LocalDate): Boolean {
         val next = nextPeriod ?: return false
-        // 假设经期持续5天
-        val endDate = next.plusDays(4)
+        val endDate = next.plusDays(DEFAULT_PERIOD_DURATION.toLong() - 1)
         return !date.isBefore(next) && !date.isAfter(endDate)
     }
 
