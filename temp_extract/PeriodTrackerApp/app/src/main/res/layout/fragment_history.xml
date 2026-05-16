@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- 标题 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="经期记录"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/black" />
+
+    <!-- 统计信息卡片 -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:padding="16dp">
+
+            <LinearLayout style="@style/HistoryStatsItem">
+                <TextView
+                    android:id="@+id/tvTotalCycles"
+                    style="@style/HistoryStatsValue"
+                    android:text="0" />
+                <TextView style="@style/HistoryStatsLabel" android:text="总周期" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/HistoryStatsItem">
+                <TextView
+                    android:id="@+id/tvAvgCycleDays"
+                    style="@style/HistoryStatsValue"
+                    android:text="--" />
+                <TextView style="@style/HistoryStatsLabel" android:text="平均周期" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/HistoryStatsItem">
+                <TextView
+                    android:id="@+id/tvAvgPeriodDays"
+                    style="@style/HistoryStatsValue"
+                    android:text="--" />
+                <TextView style="@style/HistoryStatsLabel" android:text="平均经期" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/HistoryStatsItem">
+                <TextView
+                    android:id="@+id/tvCurrentStatus"
+                    style="@style/HistoryStatsValue"
+                    android:textSize="12sp"
+                    android:text="非经期" />
+                <TextView style="@style/HistoryStatsLabel" android:text="当前状态" />
+            </LinearLayout>
+        </GridLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 记录列表 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:clipToPadding="false" />
+
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="暂无记录\n点击\"开始经期\"添加您的第一条记录"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</LinearLayout>

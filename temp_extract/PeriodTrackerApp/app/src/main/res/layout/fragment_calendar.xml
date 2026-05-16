@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 日历标题栏 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnPrevMonth"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chevron_left"
+                android:contentDescription="@string/previous_month" />
+
+            <TextView
+                android:id="@+id/tvCurrentMonth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="2024年1月" />
+
+            <ImageButton
+                android:id="@+id/btnNextMonth"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_chevron_right"
+                android:contentDescription="@string/next_month" />
+        </LinearLayout>
+
+        <!-- 星期标题 -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="7"
+            android:layout_marginTop="8dp">
+
+            <TextView style="@style/WeekDayHeader" android:text="日" />
+            <TextView style="@style/WeekDayHeader" android:text="一" />
+            <TextView style="@style/WeekDayHeader" android:text="二" />
+            <TextView style="@style/WeekDayHeader" android:text="三" />
+            <TextView style="@style/WeekDayHeader" android:text="四" />
+            <TextView style="@style/WeekDayHeader" android:text="五" />
+            <TextView style="@style/WeekDayHeader" android:text="六" />
+        </GridLayout>
+
+        <!-- 日历网格 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:layout_marginTop="4dp" />
+
+        <!-- 图例 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <LinearLayout style="@style/LegendItem">
+                <View style="@style/LegendDot" android:background="@color/period_red" />
+                <TextView style="@style/LegendText" android:text="经期" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/LegendItem">
+                <View style="@style/LegendDot" android:background="@color/ovulation_purple" />
+                <TextView style="@style/LegendText" android:text="排卵" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/LegendItem">
+                <View style="@style/LegendDot" android:background="@color/fertile_green" />
+                <TextView style="@style/LegendText" android:text="排卵期" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 操作按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStartPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="开始经期"
+                app:backgroundTint="@color/period_red"
+                app:cornerRadius="24dp"
+                android:layout_marginEnd="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEndPeriod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="结束经期"
+                app:backgroundTint="@color/primary_blue"
+                app:cornerRadius="24dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 预测信息卡片 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="预测信息"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black" />
+
+                <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:columnCount="2"
+                    android:layout_marginTop="12dp">
+
+                    <LinearLayout style="@style/InfoItem">
+                        <TextView style="@style/InfoLabel" android:text="预计下次月经" />
+                        <TextView
+                            android:id="@+id/tvNextPeriod"
+                            style="@style/InfoValue"
+                            android:text="--"
+                            android:textColor="@color/period_red" />
+                    </LinearLayout>
+
+                    <LinearLayout style="@style/InfoItem">
+                        <TextView style="@style/InfoLabel" android:text="预计排卵日" />
+                        <TextView
+                            android:id="@+id/tvOvulation"
+                            style="@style/InfoValue"
+                            android:text="--"
+                            android:textColor="@color/ovulation_purple" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/InfoItem"
+                        android:layout_columnSpan="2">
+                        <TextView style="@style/InfoLabel" android:text="排卵期" />
+                        <TextView
+                            android:id="@+id/tvFertileWindow"
+                            style="@style/InfoValue"
+                            android:text="--"
+                            android:textColor="@color/fertile_green" />
+                    </LinearLayout>
+                </GridLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 选中日期详情 -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvSelectedDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2024年1月15日"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDateStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="非经期"
+                    android:textSize="14sp"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/tvDateDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text=""
+                    android:textSize="13sp"
+                    android:textColor="@color/gray_dark" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">经期助手</string>
+    
+    <!-- Navigation -->
+    <string name="nav_calendar">日历</string>
+    <string name="nav_stats">统计</string>
+    <string name="nav_history">记录</string>
+    
+    <!-- Calendar -->
+    <string name="previous_month">上一月</string>
+    <string name="next_month">下一月</string>
+    <string name="today">今天</string>
+    <string name="start_period">开始经期</string>
+    <string name="end_period">结束经期</string>
+    <string name="predictions">预测信息</string>
+    <string name="next_period">预计下次月经</string>
+    <string name="ovulation_day">预计排卵日</string>
+    <string name="fertile_window">排卵期</string>
+    
+    <!-- Status -->
+    <string name="in_period">经期中</string>
+    <string name="not_in_period">非经期</string>
+    <string name="ovulation_status">排卵日</string>
+    <string name="fertile_status">排卵期</string>
+    <string name="predicted_period">预计经期</string>
+    
+    <!-- Period Settings -->
+    <string name="period_duration">经期持续天数</string>
+    <string name="cycle_length">周期长度</string>
+    <string name="flow_level">流量</string>
+    <string name="flow_light">少量</string>
+    <string name="flow_medium">中等</string>
+    <string name="flow_heavy">大量</string>
+    <string name="symptoms">症状</string>
+    <string name="notes">备注</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
+    
+    <!-- Stats -->
+    <string name="cycle_stats">周期统计</string>
+    <string name="avg_cycle">平均周期</string>
+    <string name="avg_period">平均经期</string>
+    <string name="total_cycles">记录周期数</string>
+    <string name="cycle_regularity">周期规律性</string>
+    <string name="cycle_length_trend">周期长度趋势</string>
+    <string name="period_length_stats">经期长度统计</string>
+    <string name="days">天</string>
+    <string name="no_cycle_data">记录更多周期后可查看趋势图</string>
+    <string name="no_period_data">记录更多经期后可查看统计图</string>
+    
+    <!-- History -->
+    <string name="period_records">经期记录</string>
+    <string name="total_cycles_count">总周期</string>
+    <string name="avg_cycle_days">平均周期</string>
+    <string name="avg_period_days">平均经期</string>
+    <string name="current_status">当前状态</string>
+    <string name="ongoing">进行中</string>
+    <string name="completed">已结束</string>
+    <string name="no_symptoms">无症状记录</string>
+    <string name="no_records">暂无记录</string>
+    <string name="add_first_record">点击"开始经期"添加您的第一条记录</string>
+    
+    <!-- Dialogs -->
+    <string name="confirm_delete">确认删除</string>
+    <string name="delete_confirm_message">确定要删除这条记录吗？此操作无法撤销。</string>
+    <string name="record_period">记录经期</string>
+    <string name="start_period_confirm">确定要在 %s 开始记录经期吗？</string>
+    <string name="end_period_confirm">确定结束当前经期吗？</string>
+    
+    <!-- Tips -->
+    <string name="cycle_knowledge">周期小知识</string>
+    <string name="cycle_tips">• 正常月经周期：21-35天
+• 正常经期长度：3-7天
+• 排卵日：通常在下次月经前14天
+• 排卵期：排卵日前5天到后1天</string>
+    
+    <!-- Legend -->
+    <string name="legend_period">经期</string>
+    <string name="legend_ovulation">排卵</string>
+    <string name="legend_fertile">排卵期</string>
+    
+    <!-- Messages -->
+    <string name="record_saved">记录已保存</string>
+    <string name="record_deleted">记录已删除</string>
+    <string name="no_active_period">没有进行中的经期</string>
+    <string name="save_failed">保存失败</string>
+    <string name="delete_failed">删除失败</string>
+    
+    <!-- Regularity -->
+    <string name="very_regular">非常规律</string>
+    <string name="regular">规律</string>
+    <string name="somewhat_regular">基本规律</string>
+    <string name="irregular">不规律</string>
+    <string name="insufficient_data">数据不足</string>
+</resources>
